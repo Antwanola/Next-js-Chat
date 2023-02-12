@@ -1,14 +1,22 @@
+import { expressMiddleware } from '@apollo/server/express4';
 import express, { Express, Request, Response } from 'express';
 import { connect } from "mongoose"
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 
+import http from 'http';
+import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config()
 
 const App: Express = express()
+
+const httpServer = http.createServer(App)
+
+
 //Connect DB
-connect(process.env.MONGO_CLIENT , {
+await connect(process.env.MONGO_CLIENT , {
 }).then(db => {
     console.log("db secured")
 })
@@ -16,11 +24,10 @@ connect(process.env.MONGO_CLIENT , {
     console.log(err)
 })
 
-// Define Middlewears
-App.use(express.urlencoded({
-    extended: true
-}))
-App.use(express.json())
+
+interface MyContext {
+  token?: string
+}
 
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
@@ -35,5 +42,29 @@ const typeDefs = `#graphql
     books: [Book]
   }
 `;
-const PORT = process.env.PORT || 4000;
 
+
+const server = new ApolloServer<MyContext>({
+  typeDefs,
+  // resolvers,
+  plugins: [ApolloServerPluginDrainHttpServer({httpServer})]
+});
+await server.start()
+
+App.use(
+  '/',
+  cors<cors.CorsRequest>(),
+  express.json(),
+  expressMiddleware(server, {
+    context: async ({ req }) => ({ token: req.headers.token }),
+  }),
+);
+
+
+
+
+
+const PORT = process.env.PORT || 4000;
+App.listen(PORT, ()=>{
+  console.log(`Listening on port ${PORT}`)
+})
