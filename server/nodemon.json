@@ -1,0 +1,7 @@
+{
+    "execMap": {
+        "ts": "ts-node"
+    },
+    "ext": "ts",
+    "exec": "ts-node --src/index.ts"
+}
