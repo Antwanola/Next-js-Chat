@@ -4,6 +4,12 @@ import { connect } from "mongoose"
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+
+//@ts-ignore
+import {resolvers} from './graphql/resolvers/index.ts';
+//@ts-ignore
+import {typeDefs} from './graphql/typeDefs/index.ts';
 
 import http from 'http';
 import cors from 'cors';
@@ -29,30 +35,19 @@ interface MyContext {
   token?: string
 }
 
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
-const typeDefs = `#graphql
-  type Book {
-    title: String
-    author: String
-  }
-
-  type Query {
-    books: [Book]
-  }
-`;
-
+const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers
+})
 
 const server = new ApolloServer<MyContext>({
-  typeDefs,
-  // resolvers,
+  schema,
   plugins: [ApolloServerPluginDrainHttpServer({httpServer})]
 });
 await server.start()
 
 App.use(
-  '/',
+  '/graphql',
   cors<cors.CorsRequest>(),
   express.json(),
   expressMiddleware(server, {
@@ -66,5 +61,5 @@ App.use(
 
 const PORT = process.env.PORT || 4000;
 App.listen(PORT, ()=>{
-  console.log(`Listening on port ${PORT}`)
+  console.log(`Listening on port http://localhost:${PORT}/graphql`)
 })
