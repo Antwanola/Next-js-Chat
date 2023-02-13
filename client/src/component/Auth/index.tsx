@@ -1,8 +1,10 @@
+import { useMutation } from "@apollo/client";
 import { Button, Center, Image, Input, Stack, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import gLogo from "../../../public/images/gLogo.png";
+import UserOperations from "../../graphql/operations/user"
 
 interface IAuthProps {
   session: Session | null;
@@ -11,7 +13,7 @@ interface IAuthProps {
 
 const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
   const [username, setUsername] = useState("");
-
+  const [createUserName, {loading, error, data}] = useMutation(UserOperations.Mutations.createUserName)
   const onSubmit = ()=>{
 
   }
