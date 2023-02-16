@@ -4,7 +4,11 @@ import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import gLogo from "../../../public/images/gLogo.png";
-import UserOperations from "../../graphql/operations/user"
+import UserOperations from "../../graphql/operations/user";
+import {
+  CreateUsernameData,
+  CreateUsernameVariables,
+} from "../../util/interface";
 
 interface IAuthProps {
   session: Session | null;
@@ -13,10 +17,23 @@ interface IAuthProps {
 
 const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
   const [username, setUsername] = useState("");
-  const [createUserName, {loading, error, data}] = useMutation(UserOperations.Mutations.createUserName)
-  const onSubmit = ()=>{
+  const [userCreation, { data, loading, error }] = useMutation<
+    CreateUsernameData,
+    CreateUsernameVariables
+  >(UserOperations.Mutations.createUserName);
 
-  }
+
+  console.log( "The data from createUserName ", {data},{Error:data}, {Loading:loading}, {Error:error});
+
+  const onSubmit = async () => {
+    try {
+      console.log(username);
+      if(!username) return;
+      await userCreation({ variables: { username } });
+    } catch (error) {
+      console.log(`onSubmit error`, error);
+    }
+  };
 
   return (
     <Center height="100vh">
@@ -29,7 +46,9 @@ const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
               value={username}
               onChange={(event) => setUsername(event.target.value)}
             />
-            <Button bg="brand.100" width="100%" onClick={onSubmit}>Save</Button>
+            <Button bg="brand.100" width="100%" onClick={onSubmit}>
+              Save
+            </Button>
           </>
         ) : (
           <>

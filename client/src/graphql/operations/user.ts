@@ -1,6 +1,6 @@
 import {  gql  } from "@apollo/client"
 
-export default {
+ const UserOperations = {
     Queries: {}, 
     Mutations: {
         createUserName: gql`
@@ -14,3 +14,4 @@ export default {
     },
     Sunscriptions: {}
 }
+export default UserOperations

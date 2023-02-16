@@ -1,6 +1,7 @@
-//@ts-ignore
+// @ts-ignore
 import userTypeDefs from './userDef.ts'
 
-export const typeDefs = [ userTypeDefs ]
+const typeDefs = [ userTypeDefs ]
 
 
+export default typeDefs;
