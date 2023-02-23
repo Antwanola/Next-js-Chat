@@ -21,9 +21,7 @@ const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
     CreateUsernameData,
     CreateUsernameVariables
   >(UserOperations.Mutations.createUserName);
-
-
-  console.log( "The data from createUserName ", {data},{Error:data}, {Loading:loading}, {Error:error});
+  console.log( "The data from createUserName ", {data});
 
   const onSubmit = async () => {
     try {

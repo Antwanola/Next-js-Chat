@@ -16,7 +16,7 @@ const typeDefs = gql`
     }
 
     type CreateUsernameRes {
-        success: String
+        success: Boolean
         error: String
     }
  

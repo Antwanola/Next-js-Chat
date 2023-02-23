@@ -2,10 +2,17 @@ import { expressMiddleware } from '@apollo/server/express4';
 import express, { Express, Request, Response } from 'express';
 import { connect } from "mongoose"
 import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 import { getSession } from "next-auth/react"
+
+
+//@ts-ignore
+import resolvers from './graphql/resolvers/index.ts';
+//@ts-ignore
+import typeDefs from './graphql/typeDefs/index.ts';
+import { GraphqlContext, MyContext, Session } from './utils/types';
+import { PrismaClient } from '@prisma/client';
 
 import http from 'http';
 import cors from 'cors';
@@ -14,11 +21,6 @@ dotenv.config()
 
 
 
-//@ts-ignore
-import resolvers from './graphql/resolvers/index.ts';
-//@ts-ignore
-import typeDefs from './graphql/typeDefs/index.ts';
-import { GraphqlContext } from '../types';
 
 
 const App: Express = express()
@@ -35,9 +37,10 @@ await connect(process.env.MONGO_URI , {
 })
 
 
-interface MyContext {
-  token?: string
-}
+//Using Prisma
+const prisma = new PrismaClient
+
+
 
 const schema = makeExecutableSchema({
   typeDefs,
@@ -54,13 +57,12 @@ await server.start()
 
 App.use(
   '/',
-  cors<cors.CorsRequest>({ origin: "http://localhost:3000", credentials: true, }),
+  cors<cors.CorsRequest>({ origin: process.env.CLIENT_URI, credentials: true, }),
   express.json(),
   expressMiddleware(server, {
     context: async ({ req }): Promise<GraphqlContext>  => {
-      const session = await getSession({req})
-      console.log(session);
-      return 
+      const session = await getSession({req}) as Session
+      return { session, prisma }
     },
   }),
 );
