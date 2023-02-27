@@ -8,35 +8,35 @@ import { CreateUserNameResponse, GraphqlContext } from "@/utils/types";
     },
     Mutation: {
       createUserName: async (_:any, args: { username: string }, context: GraphqlContext): Promise<CreateUserNameResponse> =>{
+        const { username } = args
         const { session, prisma } = context;
         if(!session.user){
           return { error: "Not Authourized"}
         }
-        const { id } = session.user;
-        console.log({id});
+        const { id:userId } = session.user;
+        
         try {
           //Check if username isn't taken
           const existingUser = await prisma.user.findUnique({
             where: {
-              id
+              username
             }
           });
-          console.log(existingUser);
-          // if(existingUser) {
-          //   console.log({user: true});
-          //   return {
-          //     error: "Username alredy taken. Please try another username"
-          //   }
-          // }
-          // await prisma.user.updateMany({
-          //   where: {
-          //     id: userId,
-          //   },
-          //   data: {
-          //     username: username,
-          //   }
-          // })
-          // return { success: true}
+          if(existingUser) {
+            console.log(existingUser);
+            return {
+              error: "Username alredy taken. Please try another username"
+            }
+          }
+          await prisma.user.update({
+            where: {
+              id: userId,
+            },
+            data: {
+              username,
+            }
+          })
+          return { success: true}
         } catch (err) {
           console.log("createUserNameError",err.message);
           return {error: err?.message}
