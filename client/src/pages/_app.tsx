@@ -1,9 +1,11 @@
 import { theme } from "@/chakra/theme";
 import { client } from "@/graphql/apolo-client";
 import { ApolloProvider } from "@apollo/client";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, Toast } from "@chakra-ui/react";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function App({
   Component,
@@ -14,6 +16,7 @@ export default function App({
       <SessionProvider session={Session}>
         <ChakraProvider theme={theme}>
           <Component {...pageProps} />
+          <ToastContainer/> 
         </ChakraProvider>
       </SessionProvider>
     </ApolloProvider>

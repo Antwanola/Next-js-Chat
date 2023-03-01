@@ -37,7 +37,7 @@ import { CreateUserNameResponse, GraphqlContext } from "@/utils/types";
             }
           })
           return { success: true}
-        } catch (err) {
+        } catch (err: any) {
           console.log("createUserNameError",err.message);
           return {error: err?.message}
         }

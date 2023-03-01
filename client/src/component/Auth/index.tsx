@@ -3,6 +3,7 @@ import { Button, Center, Image, Input, Stack, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import gLogo from "../../../public/images/gLogo.png";
 import UserOperations from "../../graphql/operations/user";
 import {
@@ -17,17 +18,29 @@ interface IAuthProps {
 
 const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
   const [username, setUsername] = useState("");
-  const [userCreation, { data, loading, error }] = useMutation<
+  const [userCreation, { loading, error }] = useMutation<
     CreateUsernameData,
     CreateUsernameVariables
   >(UserOperations.Mutations.createUserName);
 
   const onSubmit = async () => {
+    if(!username) return;
     try {
-      console.log(username);
-      if(!username) return;
-      await userCreation({ variables: { username } });
+      const { data } = await userCreation({ variables: { username } });
+      if(!data?.createUserName){
+        throw new Error()
+      }
+      if(data.createUserName.error){
+        const { createUserName: {error}} = data
+        throw new Error(error)
+      }
+      /**
+      *Reload session to obtain username and add a toast :fire
+      */
+     toast.success("Username addedd successfully!")
+      reloadSession();
     } catch (error) {
+      toast.error("Error setting username. Please try again.")
       console.log(`onSubmit error`, error);
     }
   };
