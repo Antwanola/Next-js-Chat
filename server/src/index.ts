@@ -2,21 +2,33 @@ import { expressMiddleware } from '@apollo/server/express4';
 import express, { Express, Request, Response } from 'express';
 import { connect } from "mongoose"
 import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { getSession } from "next-auth/react"
+
+
+//@ts-ignore
+import resolvers from './graphql/resolvers/index.ts';
+//@ts-ignore
+import typeDefs from './graphql/typeDefs/index.ts';
+import { GraphqlContext, MyContext, Session } from './utils/types';
+import { PrismaClient } from '@prisma/client';
 
 import http from 'http';
 import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config()
 
+
+
+
+
 const App: Express = express()
 
 const httpServer = http.createServer(App)
 
-
 //Connect DB
-await connect(process.env.MONGO_CLIENT , {
+await connect(process.env.MONGO_URI , {
 }).then(db => {
     console.log("db secured")
 })
@@ -25,46 +37,38 @@ await connect(process.env.MONGO_CLIENT , {
 })
 
 
-interface MyContext {
-  token?: string
-}
+//Using Prisma
+const prisma = new PrismaClient
 
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
-const typeDefs = `#graphql
-  type Book {
-    title: String
-    author: String
-  }
 
-  type Query {
-    books: [Book]
-  }
-`;
 
+const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers
+})
 
 const server = new ApolloServer<MyContext>({
-  typeDefs,
-  // resolvers,
+  schema,
+  csrfPrevention: true,
+  cache: "bounded",
   plugins: [ApolloServerPluginDrainHttpServer({httpServer})]
 });
 await server.start()
 
 App.use(
   '/',
-  cors<cors.CorsRequest>(),
+  cors<cors.CorsRequest>({ origin: process.env.CLIENT_URI, credentials: true, }),
   express.json(),
   expressMiddleware(server, {
-    context: async ({ req }) => ({ token: req.headers.token }),
+    context: async ({ req }): Promise<GraphqlContext>  => {
+      const session = await getSession({req}) as Session
+      return { session, prisma }
+    },
   }),
 );
 
 
 
-
-
 const PORT = process.env.PORT || 4000;
-App.listen(PORT, ()=>{
-  console.log(`Listening on port ${PORT}`)
-})
+await new Promise<void>((resolve) => httpServer.listen(PORT, resolve));
+console.log(`🚀 Server ready at http://localhost:4000/graphql`);
