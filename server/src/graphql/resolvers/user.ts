@@ -4,7 +4,9 @@ import { CreateUserNameResponse, GraphqlContext } from "@/utils/types";
 
  const resolver = {
     Query:{
-      searchUsers: () => {}
+      searchUsers: () => {
+        console.log("Inside sever search");
+      }
     },
     Mutation: {
       createUserName: async (_:any, args: { username: string }, context: GraphqlContext): Promise<CreateUserNameResponse> =>{

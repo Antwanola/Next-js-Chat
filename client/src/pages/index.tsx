@@ -4,10 +4,14 @@ import { Box } from "@chakra-ui/react";
 import { Inter } from "@next/font/google";
 import { NextPage, NextPageContext } from "next";
 import { getSession } from "next-auth/react";
-import { Session } from "inspector";
+import { Session } from "next-auth"
 const inter = Inter({ subsets: ["latin"] });
 
-const Home: NextPage = (props) => {
+interface HomeProp {
+  session: Session
+}
+
+const Home: NextPage<HomeProp> = (props) => {
   const { session } = props
   const reloadSession = () => {
     // window.location.reload()
