@@ -4,23 +4,22 @@ import { Box } from "@chakra-ui/react";
 import { Inter } from "@next/font/google";
 import { NextPage, NextPageContext } from "next";
 import { getSession } from "next-auth/react";
+import { Session } from "inspector";
 const inter = Inter({ subsets: ["latin"] });
 
 const Home: NextPage = (props) => {
-  const { session: session } = props;
-
+  const { session } = props
   const reloadSession = () => {
-    window.location.reload()
-    // const event  =  new Event("visibilitychange")
-    // document.dispatchEvent(event)
+    // window.location.reload()
+    const event  =  new Event("visibilitychange")
+    document.dispatchEvent(event)
     console.log("hey dispatch");
   };
-  
-  console.log(session);
+
   return (
     <Box>
       {session?.user.username ? (
-        <Chat userSession={session} />
+        <Chat session={session} />
       ) : (
         <Auth session={session} reloadSession={reloadSession} />
       )}
