@@ -14,6 +14,7 @@ import {
 import { useState } from "react";
 import UserOperations from "@/graphql/operations/user";
 import { SearchUsernameData, SearchUsernameInput } from "@/util/interface";
+import UserSearchList from "./UserSearchList";
 
 interface ModalProps {
   isOpen: boolean;
@@ -23,18 +24,19 @@ interface ModalProps {
 const ConversationalModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
   const [username, setUsername] = useState("");
   const [searchUsers, { loading, error, data}] = useLazyQuery<SearchUsernameData, SearchUsernameInput>(UserOperations.Queries.searchUsers)
-  
+  // console.log("Here is the searched users", data);
+
   const onSearch = (event: React.FormEvent) => {
     event.preventDefault()
     searchUsers({variables: {username}})
-    console.log("Hey Form");
+    
   }
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent bg="#2d2d2d" pb={4}>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Create Conversation</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <form onSubmit={onSearch}>
@@ -44,11 +46,12 @@ const ConversationalModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                   value={username}
                   onChange={(event) => setUsername(event.target.value)}
                 />
-                <Button type="submit" disabled={!username} >
+                <Button type="submit" disabled={!username} isLoading={loading}>
                   Search
                 </Button>
               </Stack>
             </form>
+           {data?.searchUsers && <UserSearchList users={data.searchUsers} />}
           </ModalBody>
         </ModalContent>
       </Modal>
