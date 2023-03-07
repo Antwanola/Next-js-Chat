@@ -30,7 +30,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
           Find or start a conversation
         </Text>
       </Box>
-      <ConversationalModal isOpen={isOpen} onClose={onClose} />
+      <ConversationalModal isOpen={isOpen} onClose={onClose} session={session} />
     </Box>
   );
 };
