@@ -2,7 +2,7 @@ import { gql } from "graphql-tag";
 
 const typeDefs = gql`
 type Mutation {
-    createConvo(participantsId: [String]): createConvoRes
+    createConvo(participantIds: [String]): createConvoRes
 }
 
 type createConvoRes {

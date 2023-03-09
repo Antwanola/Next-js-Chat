@@ -1,4 +1,5 @@
 import { Session } from 'next-auth';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 
 interface FeedWrapperProps {
@@ -6,8 +7,11 @@ interface FeedWrapperProps {
 }
 
 const FeedWrapper: React.FunctionComponent<FeedWrapperProps> = ({session}) => {
+  const router = useRouter()
+
+  const { convoId } = router.query
   return (
-    <div>{session.user.email}</div>
+    <div>{convoId}</div>
   );
 };
 

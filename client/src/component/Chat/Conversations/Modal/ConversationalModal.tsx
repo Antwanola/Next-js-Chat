@@ -25,6 +25,7 @@ import Participants from "./Participants";
 import conversation from "@/graphql/operations/conversation";
 import { toast } from "react-toastify";
 import { Session } from "next-auth";
+import { useRouter } from "next/router";
 
 interface ModalProps {
   isOpen: boolean;
@@ -40,6 +41,8 @@ const ConversationalModal: React.FC<ModalProps> = ({
   const {
     user: { id: userId },
   } = session;
+
+  const router = useRouter()
   const [username, setUsername] = useState("");
 
   const [participants, setParticipants] = useState<Array<SearchedUsers>>([]);
@@ -55,13 +58,26 @@ const ConversationalModal: React.FC<ModalProps> = ({
   >(conversation.Mutations.createConvo);
 
   const makeConvo = async () => {
-    const participantsIds = [userId, ...participants.map((p) => p.id)];
-    console.log(participantsIds);
+    const participantIds = [userId, ...participants.map((p) => p.id)];
+
     try {
-      const { data } = await createConvo({ variables:  {participantsIds},  });
-      console.log("convo data", data);
+      const { data } = await createConvo({ variables: { participantIds } });
+      console.log("convo data", data?.createConvo);
+      if(!data?.createConvo.convoId){
+         throw new Error("Failed to create conversation")
+      }
+      else {
+        const { createConvo :{ convoId }} = data
+        router.push({query: {convoId}})
+        console.log("convo data", data);
+        setParticipants([])
+        setUsername("")
+        onClose()
+      }
+
+     
     } catch (error: any) {
-      console.log("Error from createConvo", {error});
+      console.log("Error from createConvo", { error });
       toast.error(error.message);
     }
   };
@@ -71,6 +87,15 @@ const ConversationalModal: React.FC<ModalProps> = ({
   };
 
   const addParticipants = (user: SearchedUsers) => {
+    let existingUser;
+    participants.map((p) => {
+      if (p.id === user.id) {
+        return (existingUser = p.id);
+      }
+    });
+    if (existingUser === user.id) {
+      return toast("User already added to conversation list!");
+    }
     setParticipants((prev) => [...prev, user]);
     setUsername("");
   };
@@ -106,12 +131,24 @@ const ConversationalModal: React.FC<ModalProps> = ({
               />
             )}
             {participants.length !== 0 && (
-              <Participants
-                participants={participants}
-                removeParticipants={removeParticipants}
-                isLoading={createConvoloading}
-                makeConvo={makeConvo}
-              />
+              <>
+                <Participants
+                  participants={participants}
+                  removeParticipants={removeParticipants}
+                  isLoading={createConvoloading}
+                  makeConvo={makeConvo}
+                />
+                <Button
+                  bg="brand.100"
+                  mt={4}
+                  w="100%"
+                  _hover={{ bg: "brand.100" }}
+                  isLoading={createConvoloading}
+                  onClick={makeConvo}
+                >
+                  Create Conversation
+                </Button>
+              </>
             )}
           </ModalBody>
         </ModalContent>

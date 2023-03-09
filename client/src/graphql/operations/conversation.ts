@@ -4,12 +4,11 @@ const convoCreation =  {
     // Queries: {},
     Mutations:{
         createConvo: gql`
-        mutation CreateConvo($participantsIds: [String]!) {
-            createConvo(participantsIds: $participantsIds){
+        mutation CreateConvo($participantIds: [String]!) {
+            createConvo(participantIds: $participantIds){
             convoId
         }
         }
-        
         `,
     }
 }

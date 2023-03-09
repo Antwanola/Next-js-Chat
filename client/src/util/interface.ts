@@ -30,11 +30,11 @@ convoId: string
 //Conversations
 
 export interface CreateConvoInputs {
-participantsIds: Array<string>
+  participantIds: Array<string>
 }
 
 export interface CreateConvoData {
-  createConversation: {
+  createConvo: {
     convoId: string
   }
 }

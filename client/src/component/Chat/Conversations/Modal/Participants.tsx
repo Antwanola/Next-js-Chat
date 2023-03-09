@@ -21,7 +21,7 @@ const Participants: React.FC<ParticipantsProps> = ({
   return (
     <Flex mt={4} gap={10} flexWrap="wrap">
       {participants.map((participant) => (
-        <>
+        
           <Stack
             direction="row"
             align="center"
@@ -36,16 +36,6 @@ const Participants: React.FC<ParticipantsProps> = ({
               onClick={() => removeParticipants(participant.id)}
             />
           </Stack>
-          <Button
-            bg="brand.100"
-            w="100%"
-            _hover={{ bg: "brand.100" }}
-            isLoading={isLoading}
-            onClick={makeConvo}
-          >
-            Create Conversation
-          </Button>
-        </>
       ))}
     </Flex>
   );
