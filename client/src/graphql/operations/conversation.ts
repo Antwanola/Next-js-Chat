@@ -1,16 +1,44 @@
 import { gql } from "@apollo/client";
 
-const convoCreation =  {
-    // Queries: {},
-    Mutations:{
-        createConvo: gql`
-        mutation CreateConvo($participantIds: [String]!) {
-            createConvo(participantIds: $participantIds){
-            convoId
+const convoField = `
+convoQuery{
+    id
+    participants {
+        user {
+            id
+        username
         }
+    hasSeenlatestMessage   
+    }
+    latestMessage {
+        id
+        sender {
+            id
+            username
         }
-        `,
+        body
+        createdAt
     }
 }
 
-export default convoCreation
+`;
+const convoCreation = {
+  Queries: {
+    convoQuery: gql`
+        query ConvoQuery {
+            ${convoField}
+        }
+        `,
+  },
+  Mutations: {
+    createConvo: gql`
+      mutation CreateConvo($participantIds: [String]!) {
+        createConvo(participantIds: $participantIds) {
+          convoId
+        }
+      }
+    `,
+  },
+};
+
+export default convoCreation;

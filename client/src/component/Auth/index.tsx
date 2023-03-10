@@ -50,7 +50,7 @@ const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
       <Stack align="center" spacing={4}>
         {session ? (
           <>
-            <Text fontSize="3xl">Create a Username</Text>
+            <Text fontSize="3xl">Create a Username or sign in</Text>
             <Input
               placeholder="Enter a username"
               value={username}

@@ -81,9 +81,13 @@ const ConversationalModal: React.FC<ModalProps> = ({
       toast.error(error.message);
     }
   };
-  const onSearch = (event: React.FormEvent) => {
+  const onSearch = async(event: React.FormEvent) => {
     event.preventDefault();
-    searchUsers({ variables: { username } });
+    try {
+      await searchUsers({ variables: { username } });
+    } catch (error: any) {
+      toast.error(error.message)
+    }
   };
 
   const addParticipants = (user: SearchedUsers) => {

@@ -1,9 +1,39 @@
-import { GraphqlContext } from "@/utils/types";
+import { GraphqlContext, PopulatedConvos, ParticipantPopulated } from "@/utils/types";
 import { Prisma } from "@prisma/client";
 import { GraphQLError } from "graphql";
 
 const resolvers = {
-  Query: {},
+  Query: {
+    convoQuery: async (_:any, __: any, context: GraphqlContext): Promise<Array<PopulatedConvos>> => {
+      const { session, prisma } = context
+      if(!session?.user) {
+        throw new GraphQLError("Not Authorized")
+      }
+
+      const { user: {id: userId } } = session
+      try { 
+        const convos = await prisma.convo.findMany({
+          // where: {
+          // participants: {
+          //   some: {
+          //     userId: {
+          //       equals:userId
+          //     }
+          //   }
+          // }
+          // },
+          include: populatedConvos
+        })
+        // return convos
+        return convos.filter(conv => !!conv.participants.find(p=> p.userId === userId))
+      } catch (error: any) {
+        console.log("ConvoQuery Error", error.message);
+        throw new GraphQLError(error?.message)
+      }
+
+
+    }
+  },
   Mutation: {
     createConvo: async (
       _: any,
@@ -31,7 +61,7 @@ const resolvers = {
               },
             },
           },
-          include: porpulatedConvos,
+          include: populatedConvos,
         });
 
         return { convoId: conversation.id}
@@ -44,7 +74,7 @@ const resolvers = {
   // Subscription:{}
 };
 
-export const participantPorpulated =
+export const participantPopulated =
   Prisma.validator<Prisma.convoParticipantsInclude>()({
     user: {
       select: {
@@ -54,9 +84,9 @@ export const participantPorpulated =
     },
   });
 
-export const porpulatedConvos = Prisma.validator<Prisma.ConvoInclude>()({
+export const populatedConvos = Prisma.validator<Prisma.ConvoInclude>()({
   participants: {
-    include: participantPorpulated,
+    include: participantPopulated,
   },
   latestMessage: {
     include: {

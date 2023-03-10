@@ -1,3 +1,5 @@
+import { PopulatedConvos } from "../../../server/src/utils/types"
+
 //Users
 export interface CreateUsernameData {
   createUserName: {
@@ -33,8 +35,17 @@ export interface CreateConvoInputs {
   participantIds: Array<string>
 }
 
+
+
 export interface CreateConvoData {
   createConvo: {
     convoId: string
   }
 }
+
+//For query
+export interface ConvoData {
+  convoQuery: Array<PopulatedConvos>
+}
+
+
