@@ -28,13 +28,13 @@ const App: Express = express()
 const httpServer = http.createServer(App)
 
 //Connect DB
-await connect(process.env.MONGO_URI , {
-}).then(db => {
-    console.log("db secured")
-})
-.catch(err => {
-    console.log(err)
-})
+// await connect(process.env.MONGO_URI, {
+// }).then(db => {
+//     console.log("db secured")
+// })
+// .catch(err => {
+//     console.log(err)
+// })
 
 
 //Using Prisma
