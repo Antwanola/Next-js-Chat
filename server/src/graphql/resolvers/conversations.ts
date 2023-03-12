@@ -40,7 +40,7 @@ const resolvers = {
       args: { participantIds: Array<string> },
       context: GraphqlContext
     ):Promise<{convoId: string}> => {
-      const { session, prisma } = context;
+      const { session, prisma, pubsub } = context;
       const { participantIds } = args;
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
@@ -63,7 +63,9 @@ const resolvers = {
           },
           include: populatedConvos,
         });
-
+        pubsub.publish('CONVO_CREATED', {
+          createdConvo: conversation
+        })
         return { convoId: conversation.id}
       } catch (error: any) {
         console.log("createConvoError", error.message);
@@ -71,7 +73,15 @@ const resolvers = {
       }
     },
   },
-  // Subscription:{}
+  Subscription:{
+    createdConvo: {
+      subscribe: (_:any, __:any, context: GraphqlContext) => {
+        const { pubsub } = context
+        pubsub.asyncIterator(['CONVO_CREATED'])
+      }
+    }
+  }
+
 };
 
 export const participantPopulated =

@@ -30,7 +30,12 @@ type Query {
 type createConvoRes {
     convoId: String
 }
+
+type Subscription {
+    createdConvo: Convo
+ }
 `;
+
 
 
 export default typeDefs
