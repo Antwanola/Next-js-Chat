@@ -1,6 +1,7 @@
-import { GraphqlContext, PopulatedConvos, ParticipantPopulated } from "@/utils/types";
+import { GraphqlContext, PopulatedConvos, ParticipantPopulated, SubPayload } from "@/utils/types";
 import { Prisma } from "@prisma/client";
 import { GraphQLError } from "graphql";
+import { withFilter } from "graphql-subscriptions";
 
 const resolvers = {
   Query: {
@@ -68,17 +69,23 @@ const resolvers = {
         })
         return { convoId: conversation.id}
       } catch (error: any) {
-        console.log("createConvoError", error.message);
         throw new GraphQLError(error.message);
       }
     },
   },
   Subscription:{
     createdConvo: {
-      subscribe: (_:any, __:any, context: GraphqlContext) => {
+      subscribe: withFilter((_:any, __:any, context: GraphqlContext) => {
         const { pubsub } = context
-        pubsub.asyncIterator(['CONVO_CREATED'])
+        return pubsub.asyncIterator(['CONVO_CREATED'])
+      },
+      (payload: SubPayload, _: any, contex: GraphqlContext)=>{
+        const { session } = contex;
+        const  { createdConvo: { participants }} = payload
+        const userIsParticipant = !!participants.find(p=> p.userId == session.user.id)
+        return userIsParticipant
       }
+      )
     }
   }
 

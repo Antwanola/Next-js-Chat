@@ -43,6 +43,11 @@ export interface MyContext {
     name: string
   }
 
+  //Subscription Payload type
+  export interface SubPayload {
+    createdConvo: PopulatedConvos
+  }
+
 
   //Conversation (Convo) type section
 

@@ -35,7 +35,7 @@ const wsServer = new WebSocketServer({
   server: httpServer,
   // Pass a different path here if app.use
   // serves expressMiddleware at a different path
-  path: '/graphql/subscription',
+  path: '/subscription',
 });
 
 

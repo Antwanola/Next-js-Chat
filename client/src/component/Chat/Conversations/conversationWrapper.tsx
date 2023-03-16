@@ -4,6 +4,8 @@ import ConversationList from "./ConversationList";
 import convoOperations from "../../../graphql/operations/conversation";
 import { useQuery } from "@apollo/client";
 import { ConvoData } from "@/util/interface";
+import { PopulatedConvos } from "../../../../../server/src/utils/types";
+import { useEffect } from "react";
 
 interface ConversationWrapperProps {
   session: Session;
@@ -16,9 +18,41 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
     data: convoData,
     loading: convoLoading,
     error: convoError,
+    subscribeToMore,
   } = useQuery<ConvoData>(convoOperations.Queries.convoQuery);
 
-  console.log("Convo data queried", convoData);
+  
+  const subscribeToNewConvo = () => {
+    subscribeToMore({
+      document: convoOperations.Subscriptions.createdConvo,
+      updateQuery: (
+        prev,
+        {
+          subscriptionData,
+        }: { subscriptionData: { data: { createdConvo: PopulatedConvos } } }
+      ) => {
+        if (!subscriptionData.data) return prev;
+        const newConvoItem = subscriptionData.data.createdConvo;
+        console.log("Here is the subscription Data", subscriptionData.data.createdConvo);
+
+        return Object.assign({}, prev, {
+          convoQuery: [
+            newConvoItem,
+            ...prev.convoQuery,
+          ],
+        });
+      },
+    });
+  }
+
+
+  //Emmit Subscription when component mounts
+  useEffect(() => {
+    subscribeToNewConvo()
+  }, [])
+
+
+  
   return (
     <Box
       width={{ base: "100%", md: "400px" }}
@@ -26,7 +60,10 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
       py={6}
       px={3}
     >
-      <ConversationList session={session} convoList={convoData?.convoQuery || []} />      
+     { <ConversationList
+        session={session}
+        convoList={convoData?.convoQuery || []}
+      />}
     </Box>
   );
 };

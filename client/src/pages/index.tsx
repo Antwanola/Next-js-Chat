@@ -14,7 +14,7 @@ interface HomeProp {
 const Home: NextPage<HomeProp> = (props) => {
   const { session } = props
   const reloadSession = () => {
-    // window.location.reload()
+    window.location.reload()
     const event  =  new Event("visibilitychange")
     document.dispatchEvent(event)
     console.log("hey dispatch");

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 const convoField = `
-convoQuery{
+
     id
     participants {
         user {
@@ -18,17 +18,18 @@ convoQuery{
         }
         body
         createdAt
-    }
-}
-
+      }
+      updatedAt
 `;
 const convoCreation = {
   Queries: {
     convoQuery: gql`
-        query ConvoQuery {
+      query ConvoQuery {
+        convoQuery{
             ${convoField}
-        }
-        `,
+          }
+           
+        }`,
   },
   Mutations: {
     createConvo: gql`
@@ -39,6 +40,15 @@ const convoCreation = {
       }
     `,
   },
+  Subscriptions: {
+    createdConvo: gql`
+     subscription ConvoCreated {
+      createdConvo {
+        ${convoField}
+      }
+    }
+    `
+  }
 };
 
 export default convoCreation;
