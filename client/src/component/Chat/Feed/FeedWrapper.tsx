@@ -17,6 +17,7 @@ const FeedWrapper: React.FunctionComponent<FeedWrapperProps> = ({
     <Flex
       display={{ base: convoId ? "flex" : "none", md: "flex" }}
       w="100%"
+      px={20}
       direction="column"
       border="1px red solid"
     >

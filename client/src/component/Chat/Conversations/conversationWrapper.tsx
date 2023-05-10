@@ -6,6 +6,7 @@ import { useQuery } from "@apollo/client";
 import { ConvoData } from "@/util/interface";
 import { PopulatedConvos } from "../../../../../server/src/utils/types";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 interface ConversationWrapperProps {
   session: Session;
@@ -21,6 +22,12 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
     subscribeToMore,
   } = useQuery<ConvoData>(convoOperations.Queries.convoQuery);
 
+  const router = useRouter()
+
+  const onViewConvo = async ( convoId: string) => {
+    router.push({ query: { convoId }})
+  }
+
   
   const subscribeToNewConvo = () => {
     subscribeToMore({
@@ -33,7 +40,7 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
       ) => {
         if (!subscriptionData.data) return prev;
         const newConvoItem = subscriptionData.data.createdConvo;
-        console.log("Here is the subscription Data", subscriptionData.data.createdConvo);
+        console.log("Here is the subscription Data", subscriptionData.data);
 
         return Object.assign({}, prev, {
           convoQuery: [
@@ -63,6 +70,8 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
      { <ConversationList
         session={session}
         convoList={convoData?.convoQuery || []}
+        onViewConvo={onViewConvo}
+        
       />}
     </Box>
   );
