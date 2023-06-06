@@ -1,4 +1,4 @@
-import { Box, } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import ConversationList from "./ConversationList";
 import convoOperations from "../../../graphql/operations/conversation";

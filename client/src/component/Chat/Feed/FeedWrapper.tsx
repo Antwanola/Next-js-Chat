@@ -3,7 +3,7 @@ import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import MessagesHeader from "./Messages/MessagesHeader";
-import * as React from "react";
+import MessageInput from "./Messages/Input";
 
 interface FeedWrapperProps {
   session: Session;
@@ -25,7 +25,8 @@ const FeedWrapper: React.FunctionComponent<FeedWrapperProps> = ({
       direction="column"
       border="1px red solid">
       {convoId && typeof convoId =="string" ? (
-        <Flex
+        <>
+           <Flex
           direction="column"
           justify="space-between"
           overflow="hidden"
@@ -35,6 +36,8 @@ const FeedWrapper: React.FunctionComponent<FeedWrapperProps> = ({
           <MessagesHeader userId={userId} convoId={convoId}/>
           {/* <Messages/> */}
         </Flex>
+        <MessageInput session={session} convoId={convoId}/>
+        </>
       ) : (
         <div>No Conversation Selected</div>
       )}

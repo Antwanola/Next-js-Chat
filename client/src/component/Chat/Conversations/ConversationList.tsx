@@ -70,7 +70,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
         />
         
       ))}
-       <Box
+       {/* <Box
         position="absolute"
         bottom={0}
         left={0}
@@ -83,7 +83,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
         <Button width="100%" onClick={() => signOut()}>
           Logout
         </Button>
-      </Box>
+      </Box> */}
 
     </Box>
   );
