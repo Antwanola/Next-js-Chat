@@ -19,7 +19,7 @@ import { BiLogOut } from "react-icons/bi";
 import { AiOutlineEdit } from "react-icons/ai";
 import { formatUsername } from "@/util/functions";
 
-const formatRelativeLocale = {
+interface formatRelativeLocale {
   lastweek: "eeee",
   yesterday: "'Yesterday'",
   today: "p",
@@ -28,7 +28,7 @@ const formatRelativeLocale = {
 interface convoItemProps {
   userId: string;
   singleConvo: PopulatedConvos;
-  onClick: () => void;
+  onClick:()=> void;
   isSelected: boolean;
   selectedConvoId: Object;
 }
@@ -43,17 +43,20 @@ const ConversationItem: React.FC<convoItemProps> = ({
   const [menuOpen, setmenuOpen] = useState(false);
   const handleClick = (event: React.MouseEvent) => {
     if (event.type == "click") {
-      onClick;
+      onClick();
     } else if (event.type == "contextmenu") {
       event.preventDefault();
       setmenuOpen(true);
     }
   };
+  console.log(singleConvo);
 
-  formatRelative: (token) =>
-  formatRelativeLocale[
-    token as keyof typeof formatRelativeLocale
-  ]
+  formatRelative: (token) =>{
+    formatRelativeLocale[
+      token as keyof typeof formatRelativeLocale
+    ]
+  }
+
 
   return (
     <Stack
@@ -65,6 +68,7 @@ const ConversationItem: React.FC<convoItemProps> = ({
       cursor="pointer"
       bg={isSelected ? "whiteAlpha.200" : "none"}
       _hover={{ bg: "whiteAlpha.200" }}
+      onClick={handleClick}
       position="relative">
       <Menu isOpen={menuOpen} onClose={() => setmenuOpen(false)}>
         <MenuList bg="#2d2d2d">
@@ -90,7 +94,7 @@ const ConversationItem: React.FC<convoItemProps> = ({
           )}
         </MenuList>
       </Menu>
-      <Avatar size="2xs" />
+      <Avatar size="sm" />
       <Flex justify="space-between" width="100%" height="100%">
         <Flex direction="column" width="70%" height="100%">
           <Text
@@ -112,13 +116,11 @@ const ConversationItem: React.FC<convoItemProps> = ({
             </Box>
           )}
         </Flex>
-        <Text color="whiteAlpha.700" textAlign="right" position="absolute" right={3} fontSize={10}>
-          {/* {singleConvo.updatedAt} */}
+        <Text color="whiteAlpha.700" textAlign="right" fontSize={10}>
           {formatRelative(new Date(singleConvo.updatedAt),new Date(), 
            {
             locale: {
               ...enUS,
-             
             },
           }
           )}

@@ -5,7 +5,7 @@ export const formatUsername = (
   myUserId: String
 ): string => {
   const username = participants
-    .filter((participant) => participant.userId != myUserId)
+    .filter((participant) => participant.user.id !== myUserId)
     .map((participant) => participant.user.username);
 
   return username.join(", ");

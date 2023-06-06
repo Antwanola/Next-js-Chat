@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import ConversationList from "./ConversationList";
 import convoOperations from "../../../graphql/operations/conversation";
@@ -23,6 +23,7 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
   } = useQuery<ConvoData>(convoOperations.Queries.convoQuery);
 
   const router = useRouter()
+  const { query: { convoId } } = router;
 
   const onViewConvo = async ( convoId: string) => {
     router.push({ query: { convoId }})
@@ -56,12 +57,12 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
   //Emmit Subscription when component mounts
   useEffect(() => {
     subscribeToNewConvo()
-  }, [])
-
+  }, []);
 
   
   return (
     <Box
+      display={{ base: convoId ? "none" : "flex", md: "flex" }}
       width={{ base: "100%", md: "400px" }}
       bg="whiteAlpha.200"
       py={6}
@@ -73,6 +74,7 @@ const ConversationWrapper: React.FC<ConversationWrapperProps> = ({
         onViewConvo={onViewConvo}
         
       />}
+      
     </Box>
   );
 };

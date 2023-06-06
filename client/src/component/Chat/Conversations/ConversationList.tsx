@@ -1,5 +1,6 @@
 import { ConvoData } from "@/util/interface";
-import { Box, Text } from "@chakra-ui/react";
+import { signOut } from "next-auth/react"
+import { Box, Button, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -35,35 +36,9 @@ const ConversationList: React.FC<ConversationListProps> = ({
   const { user: {id: userId }} = session
 
 
-  // const onEditConversation = (convo: PopulatedConvos) => {
-  //   setEditingConvo(convo);
-  //   openModal();
-  // }
-
-  // const onLeaveConversation = async (convo: PopulatedConvos) => {
-  //   const participantIds = convo.participants
-  //   .filter((p) => p.user.id !== userId)
-  //     .map((p) => p.user.id);
-
-  //   try {
-  //     const { data, errors } = await updateParticipants({
-  //       variables: {
-  //         conversationId: conversation.id,
-  //         participantIds,
-  //       },
-  //     });
-
-  //     if (!data || errors) {
-  //       throw new Error("Failed to update participants");
-  //     }
-  //   } catch (error: any) {
-  //     console.log("onUpdateConversation error", error);
-  //     toast.error(error?.message);
-  //   }
-  // };
 
   return (
-    <Box w="100%">
+    <Box w="100%" overflow="hidden" >
       <Box
         py={2}
         px={4}
@@ -93,7 +68,23 @@ const ConversationList: React.FC<ConversationListProps> = ({
           selectedConvoId={convo.id}
 
         />
+        
       ))}
+       <Box
+        position="absolute"
+        bottom={0}
+        left={0}
+        width="100%"
+        bg="#313131"
+        px={8}
+        py={6}
+        zIndex={1}
+      >
+        <Button width="100%" onClick={() => signOut()}>
+          Logout
+        </Button>
+      </Box>
+
     </Box>
   );
 };
