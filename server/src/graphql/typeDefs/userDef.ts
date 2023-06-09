@@ -29,6 +29,7 @@ type User {
     type CreateUsernameRes {
         success: Boolean
         error: String
+        
     }
  
 `
