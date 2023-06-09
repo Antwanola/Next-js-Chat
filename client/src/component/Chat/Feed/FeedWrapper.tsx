@@ -1,7 +1,9 @@
-import { Flex } from "@chakra-ui/react";
+import { Button, Flex } from "@chakra-ui/react";
 import { Session } from "next-auth";
+import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import * as React from "react";
+import MessagesHeader from "./Messages/MessagesHeader";
+import MessageInput from "./Messages/Input";
 
 interface FeedWrapperProps {
   session: Session;
@@ -13,14 +15,32 @@ const FeedWrapper: React.FunctionComponent<FeedWrapperProps> = ({
   const router = useRouter();
 
   const { convoId } = router.query;
+  const { user: {id: userId} } = session;
+  console.log(userId);
   return (
     <Flex
       display={{ base: convoId ? "flex" : "none", md: "flex" }}
       w="100%"
+      px={2}
       direction="column"
-      border="1px red solid"
-    >
-      {convoId ? <Flex>{convoId}</Flex> : <div>No Conversation Selected</div>}
+      border="1px red solid">
+      {convoId && typeof convoId =="string" ? (
+        <>
+           <Flex
+          direction="column"
+          justify="space-between"
+          overflow="hidden"
+          flexGrow={1}
+          >
+          {/* {convoId} */}
+          <MessagesHeader userId={userId} convoId={convoId}/>
+          {/* <Messages/> */}
+        </Flex>
+        <MessageInput session={session} convoId={convoId}/>
+        </>
+      ) : (
+        <div>No Conversation Selected</div>
+      )}
     </Flex>
   );
 };

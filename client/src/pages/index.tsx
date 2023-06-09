@@ -11,8 +11,7 @@ interface HomeProp {
   session: Session
 }
 
-const Home: NextPage<HomeProp> = (props) => {
-  const { session } = props
+const Home: NextPage<HomeProp> = ({session}) => {
   const reloadSession = () => {
     window.location.reload()
     const event  =  new Event("visibilitychange")

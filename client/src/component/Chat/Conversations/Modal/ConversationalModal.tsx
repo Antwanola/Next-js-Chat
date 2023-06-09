@@ -51,7 +51,6 @@ const ConversationalModal: React.FC<ModalProps> = ({
     SearchUsernameData,
     SearchUsernameInput
   >(UserOperations.Queries.searchUsers);
-
   const [createConvo, { loading: createConvoloading }] = useMutation<
     CreateConvoData,
     CreateConvoInputs

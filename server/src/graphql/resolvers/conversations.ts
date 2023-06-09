@@ -10,7 +10,6 @@ const resolvers = {
       if(!session?.user) {
         throw new GraphQLError("Not Authorized")
       }
-
       const { user: {id: userId } } = session
       try { 
         const convos = await prisma.convo.findMany({
@@ -46,10 +45,7 @@ const resolvers = {
       if (!session?.user) {
         throw new GraphQLError("Not authorized");
       }
-
-      const {
-        user: { id: userId },
-      } = session;
+      const { user: {id: userId } } = session
       try {
         const conversation = await prisma.convo.create({
           data: {
@@ -58,6 +54,7 @@ const resolvers = {
                 data: participantIds.map((id) => ({
                   userId: id,
                   hasSeenlatestMessage: id === userId,
+                  
                 })),
               },
             },
@@ -82,7 +79,7 @@ const resolvers = {
       (payload: SubPayload, _: any, contex: GraphqlContext)=>{
         const { session } = contex;
         const  { createdConvo: { participants }} = payload
-        const userIsParticipant = !!participants.find(p=> p.userId == session.user.id)
+        const userIsParticipant = !!participants.find(p=> p.userId == session?.user?.id)
         return userIsParticipant
       }
       )
@@ -116,5 +113,6 @@ export const populatedConvos = Prisma.validator<Prisma.ConvoInclude>()({
     },
   },
 });
+
 
 export default resolvers;
