@@ -1,6 +1,7 @@
 import { Box, Input } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import * as React from "react";
+import { toast } from "react-toastify";
 
 interface InputProps {
   session: Session;
@@ -12,6 +13,17 @@ const MessageInput: React.FunctionComponent<InputProps> = ({
   convoId,
 }) => {
   const [messageBody, setMessageBody] = React.useState<string>();
+
+  // const onSendMessage(event: React.FormEvent) => {
+  //   event.preventDefault();
+
+  //   try {
+  //     //Call a message mutation
+  //   } catch (error: any) {
+  //     console.log("onSendMessageError", error);
+  //     toast.error(error?.message);      
+  //   }
+  // }
 
   return (
     <Box px={4} py={6} width="100%">

@@ -3,6 +3,7 @@ import { Prisma, PrismaClient } from "@prisma/client"
 import { ISODateString } from "next-auth"
 import { Context } from "graphql-ws/lib/server"
 import { PubSub } from "graphql-subscriptions"
+import { populatedMessages } from "@/graphql/resolvers/messages"
 
 export interface GraphqlContext {
 session: Session | null
@@ -54,3 +55,17 @@ export interface MyContext {
   export type  PopulatedConvos  = Prisma.ConvoGetPayload<{ include: typeof populatedConvos }>
 
   export type ParticipantPopulated = Prisma.convoParticipantsGetPayload<{ include:  typeof participantPopulated }>
+  export type PopulatedMessages = Prisma.MessageGetPayload<{include: typeof populatedMessages}>
+
+  // Messages
+
+  export interface sendMessageArgs {
+    id: string,
+    convoId: string,
+    senderId: string,
+    body: string
+  }
+
+  export interface messageSubscriptionPayload {
+    messageSent: PopulatedMessages
+  }
